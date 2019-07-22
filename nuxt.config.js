@@ -1,13 +1,17 @@
 const fs = require('fs')
 const path = require('path')
 const pkg = require('./package')
+const poststylus = require('poststylus')
+const pxtorem = require('postcss-pxtorem')
 
 // Avoid css files being executed
 require.extensions['.css'] = () => {
   return
 }
 
-const responsiveJS = fs.readFileSync(path.resolve(__dirname, './plugins/responsive.js'), 'utf8')
+const resolve = file => path.resolve(__dirname, file)
+
+const responsiveJS = fs.readFileSync(resolve('./plugins/responsive.js'), 'utf8')
 
 module.exports = {
   mode: 'universal',
@@ -40,7 +44,6 @@ module.exports = {
   ** Global CSS
   */
   css: [
-    'mand-mobile/lib/mand-mobile.css',
     '@/assets/global.css',
   ],
 
@@ -65,25 +68,35 @@ module.exports = {
       presets: [
         '@vue/app'
       ],
-      // plugins: [
-      //   [
-      //     'import',
-      //     {
-      //       libraryName: 'mand-mobile',
-      //       libraryDirectory: 'lib'
-      //     }
-      //   ]
-      // ]
+      plugins: [
+        [
+          'import',
+          {
+            libraryName: 'mand-mobile',
+            libraryDirectory: 'components'
+          }
+        ]
+      ]
     },
-    postcss: {
-      plugins: {
-        'autoprefixer': {},
-        'postcss-pxtorem': {
-          'rootValue': 100,
-          'minPixelValue': 2,
-          'propWhiteList': []
-        }
-      }
+    transpile: [
+      'mand-mobile'
+    ],
+    loaders: {
+      stylus: {
+        use: [
+          poststylus([
+            pxtorem({
+              rootValue: 100,
+              propWhiteList: [],
+              minPixelValue: 3
+            }),
+            'autoprefixer'
+          ])
+        ],
+        import: [
+          resolve('./assets/theme.custom')
+        ]
+      },
     },
     /*
     ** You can extend webpack config here

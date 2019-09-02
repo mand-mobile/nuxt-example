@@ -36,7 +36,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    // { src: '~/plugins/reset.js' },
+    { src: '~/plugins/reset.js' },
   ],
   /*
   ** Nuxt.js dev-modules
